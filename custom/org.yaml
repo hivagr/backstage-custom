@@ -1,0 +1,15 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: hivagr
+spec:
+  memberOf: [infra]
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: infra
+spec:
+  type: team
+  children: []

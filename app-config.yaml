@@ -1,5 +1,5 @@
 app:
-  title: Scaffolded Backstage App
+  title: Backstage Custom
   baseUrl: http://localhost:3000
 
 organization:
@@ -50,6 +50,10 @@ proxy:
   #   '/test':
   #     target: 'https://example.com'
   #     changeOrigin: true
+  # endpoints:
+  #   '/docker':
+  #     target: 'https://hub.docker.com'
+  #     changeOrigin: true
 
 # Reference documentation http://backstage.io/docs/features/techdocs/configuration
 # Note: After experimenting with basic setup, use CI/CD to generate docs
@@ -78,21 +82,36 @@ catalog:
   rules:
     - allow: [Component, System, API, Resource, Location]
   locations:
-    # Local example data, file locations are relative to the backend process, typically `packages/backend`
+    # Custom local entities
     - type: file
-      target: ../../examples/entities.yaml
+      target: ../../custom/entities.yaml
 
-    # Local example template
     - type: file
-      target: ../../examples/template/template.yaml
+      target: ../../custom/org.yaml
+      rules:
+        - allow: [User, Group]
+
+    # Custom local template
+    - type: url
+      target: https://github.com/hivagr/backstage-templates/blob/main/template-mock-exam.yaml
       rules:
         - allow: [Template]
 
-    # Local example organizational data
-    - type: file
-      target: ../../examples/org.yaml
-      rules:
-        - allow: [User, Group]
+
+  providers:
+    github:
+      # the provider ID can be any camelCase string
+      providerId:
+        organization: 'hivagr' # string
+        catalogPath: '/catalog-info.yaml' # string
+        filters:
+          branch: 'main' # string
+          repository: '.*' # Regex
+        schedule: # same options as in SchedulerServiceTaskScheduleDefinition
+          # supports cron, ISO duration, "human duration" as used in code
+          frequency: { minutes: 30 }
+          # supports ISO duration, "human duration" as used in code
+          timeout: { minutes: 3 }
 
     ## Uncomment these lines to add more example data
     # - type: url
